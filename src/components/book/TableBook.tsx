@@ -8,46 +8,33 @@ import {
 } from "react-native";
 import { constants } from "@/src/constants";
 import { useEffect, useState } from "react";
-import axios from "redaxios";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
+import axios from "axios";
 
-const http = axios.create({
-  baseURL: "http://api.mobilebook",
-});
-
-const data = [
-  {
-    id: 1,
-    title: "percy jackson",
-    author: "rick riordan",
-    category: "aventura",
-  },
-  {
-    id: 2,
-    title: "percy jackson",
-    author: "rick riordan",
-    category: "aventura",
-  },
-  {
-    id: 3,
-    title: "percy jackson",
-    author: "rick riordan",
-    category: "aventura",
-  },
-  {
-    id: 4,
-    title: "percy jackson",
-    author: "rick riordan",
-    category: "aventura",
-  },
-];
+interface Books {
+  id: number;
+  title: string;
+  author: string;
+  category: string;
+}
 
 export default function TableBook() {
-  const [tasks, setTasks] = useState("");
+  const [books, setBooks] = useState<Books[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    http.get("/api/tasks").then((res) => setTasks(res.data.tasks));
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get("http://192.168.1.103:3000/books");
+        setBooks(response.data);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+        setError("Erro ao buscar livros. Verifique sua conexão de rede.");
+      }
+    };
+
+    fetchBooks();
   }, []);
 
   const onButtonPress = () => {
@@ -70,7 +57,7 @@ export default function TableBook() {
         <Text style={styles.heading}></Text>
       </View>
       <FlatList
-        data={data}
+        data={books}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => (
           <View style={styles.row}>
