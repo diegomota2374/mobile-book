@@ -1,28 +1,28 @@
 {
   "books": [
     {
-      "id": 1,
+      "id": "1",
       "title": "percy jackson",
       "author": "rick riordan",
       "category": "aventura"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "anjos e demonios",
       "author": "danbrow",
       "category": "aventura"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "percy jackson",
       "author": "rick riordan",
       "category": "aventura"
     },
     {
-      "id": 4,
-      "title": "percy jackson",
-      "author": "rick riordan",
-      "category": "aventura"
+      "id": "e150",
+      "title": "Teste edite ",
+      "author": "Teste",
+      "category": "Teste"
     }
   ]
 }

@@ -12,8 +12,6 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    justifyContent: "center",
     flex: 1,
     backgroundColor: constants.colors.black,
     paddingVertical: 30,

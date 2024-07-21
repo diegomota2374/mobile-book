@@ -12,7 +12,7 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: "Home" }} />
-      <Stack.Screen name="books" options={{ title: "Books" }} />
+      <Stack.Screen name="book/[book]" options={{ title: "Book" }} />
     </Stack>
   );
 }

@@ -37,12 +37,23 @@ export default function TableBook() {
     fetchBooks();
   }, []);
 
-  const onButtonPress = () => {
-    Alert.alert("Floating Button Pressed");
+  const handleEditBook = (book: Books) => {
+    const jsonBook = JSON.stringify(book);
+    router.navigate(`/book/${jsonBook}`);
+  };
+
+  const handleDeleteBook = async (id: number) => {
+    try {
+      await axios.delete(`http://192.168.1.103:3000/books/${id}`);
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id));
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      setError("Erro ao excluir livro.");
+    }
   };
 
   function handleNavigate() {
-    router.navigate("/books");
+    router.navigate("/book/forme");
   }
 
   return (
@@ -64,10 +75,16 @@ export default function TableBook() {
             <Text style={styles.cell}>{item.title}</Text>
             <Text style={styles.cell}>{item.author}</Text>
             <Text style={styles.cell}>{item.category}</Text>
-            <TouchableOpacity style={styles.adit} onPress={onButtonPress}>
+            <TouchableOpacity
+              style={styles.adit}
+              onPress={() => handleEditBook(item)}
+            >
               <AntDesign name="edit" size={18} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.delete} onPress={onButtonPress}>
+            <TouchableOpacity
+              style={styles.delete}
+              onPress={() => handleDeleteBook(item.id)}
+            >
               <AntDesign name="delete" size={18} color="#fff" />
             </TouchableOpacity>
           </View>
