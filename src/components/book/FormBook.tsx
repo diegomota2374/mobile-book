@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import axios from "axios";
 import { router } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { Picker } from "@react-native-picker/picker";
 
 interface Book {
   id?: number;
@@ -17,33 +19,63 @@ interface Book {
   category: string;
 }
 interface FormBookProps {
-  initialBook?: Book | String;
+  initialBook: Book | String;
 }
 
-export default function FormeBook(book: FormBookProps) {
-  const [books, setBooks] = useState<Book>({
-    title: "",
-    author: "",
-    category: "",
+const categories = [
+  "Aventura",
+  "Ação",
+  "Romance",
+  "Suspense",
+  "Comédia",
+  "Terror",
+];
+
+export default function FormeBook({ initialBook }: FormBookProps) {
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<Book>({
+    defaultValues: {
+      title: "",
+      author: "",
+      category: "",
+    },
   });
 
   useEffect(() => {
-    if (book && book.initialBook !== "forme") {
-      const { id, title, author, category } = book.initialBook as Book;
-      setBooks({ id, title, author, category });
+    if (typeof initialBook === "string" && initialBook !== "forme") {
+      try {
+        const book = JSON.parse(initialBook) as Book;
+        setValue("id", book.id);
+        setValue("title", book.title);
+        setValue("author", book.author);
+        setValue("category", book.category);
+      } catch (error) {
+        console.error("Failed to parse initialBook:", error);
+      }
+    } else if (typeof initialBook === "object" && initialBook !== null) {
+      const book = initialBook as Book;
+      setValue("id", book.id);
+      setValue("title", book.title);
+      setValue("author", book.author);
+      setValue("category", book.category);
     }
-  }, []);
+  }, [initialBook, setValue]);
 
-  const handleSubmit = async () => {
+  const onSubmit = async (data: Book) => {
     try {
-      if (books.id) {
-        await axios.put(`http://192.168.1.103:3000/books/${books.id}`, books);
+      if (data.id) {
+        await axios.put(`http://192.168.1.103:3000/books/${data.id}`, data);
         Alert.alert("Livro atualizado com sucesso!");
       } else {
-        await axios.post("http://192.168.1.103:3000/books", books);
+        await axios.post("http://192.168.1.103:3000/books", data);
         Alert.alert("Livro adicionado com sucesso!");
       }
-      router.replace("/");
+      router.back();
     } catch (error) {
       console.error("Error saving book:", error);
       Alert.alert("Erro ao salvar livro. Verifique sua conexão de rede.");
@@ -52,30 +84,68 @@ export default function FormeBook(book: FormBookProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Título:</Text>
-      <TextInput
-        style={styles.input}
-        value={books.title}
-        onChangeText={(text) => setBooks({ ...books, title: text })}
+      <Text style={styles.label}>Title:</Text>
+      <Controller
+        control={control}
+        name="title"
+        rules={{ required: "O Título é obrigatório" }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
       />
+      {errors.title && (
+        <Text style={styles.errorText}>{errors.title.message}</Text>
+      )}
 
-      <Text style={styles.label}>Autor:</Text>
-      <TextInput
-        style={styles.input}
-        value={books.author}
-        onChangeText={(text) => setBooks({ ...books, author: text })}
+      <Text style={styles.label}>Author:</Text>
+      <Controller
+        control={control}
+        name="author"
+        rules={{ required: "O Autor é obrigatório" }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
       />
+      {errors.author && (
+        <Text style={styles.errorText}>{errors.author.message}</Text>
+      )}
 
       <Text style={styles.label}>Categoria:</Text>
-      <TextInput
-        style={styles.input}
-        value={books.category}
-        onChangeText={(text) => setBooks({ ...books, category: text })}
+      <Controller
+        control={control}
+        name="category"
+        rules={{ required: "A Categoria é obrigatória" }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Picker
+            selectedValue={value}
+            style={styles.picker}
+            onValueChange={(itemValue) => onChange(itemValue)}
+            onBlur={onBlur}
+          >
+            <Picker.Item label="Selecione uma categoria" value="" />
+            {categories.map((category) => (
+              <Picker.Item key={category} label={category} value={category} />
+            ))}
+          </Picker>
+        )}
       />
+      {errors.category && (
+        <Text style={styles.errorText}>{errors.category.message}</Text>
+      )}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.buttonText}>
-          {books.id ? "Atualizar Livro" : "Adicionar Livro"}
+          {getValues("id") ? "Editar Livro" : "Adicionar Livro"}
         </Text>
       </TouchableOpacity>
     </View>
@@ -98,6 +168,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
     padding: 10,
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+    backgroundColor: "#fff",
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 10,
   },
   button: {
     backgroundColor: "#6AB7E2",

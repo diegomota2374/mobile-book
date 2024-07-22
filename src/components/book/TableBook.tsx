@@ -8,9 +8,9 @@ import {
   View,
 } from "react-native";
 import { constants } from "@/src/constants";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 
 interface Books {
@@ -25,19 +25,24 @@ export default function TableBook() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get("http://192.168.1.103:3000/books");
-        setBooks(response.data);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-        setError("Erro ao buscar livros. Verifique sua conexão de rede.");
-      }
-    };
-
-    fetchBooks();
+  const fetchBooks = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://192.168.1.103:3000/books");
+      setBooks(response.data);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      setError("Erro ao buscar livros. Verifique sua conexão de rede.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchBooks();
+    }, [fetchBooks])
+  );
 
   const handleEditBook = (book: Books) => {
     const jsonBook = JSON.stringify(book);
