@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   StyleSheet,
@@ -22,6 +23,7 @@ interface Books {
 export default function TableBook() {
   const [books, setBooks] = useState<Books[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -43,13 +45,35 @@ export default function TableBook() {
   };
 
   const handleDeleteBook = async (id: number) => {
-    try {
-      await axios.delete(`http://192.168.1.103:3000/books/${id}`);
-      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id));
-    } catch (error) {
-      console.error("Error deleting book:", error);
-      setError("Erro ao excluir livro.");
-    }
+    Alert.alert(
+      "Confirme a Exclusão",
+      "Tem certeza de que deseja excluir este livro?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Excluir",
+          onPress: async () => {
+            setLoading(true);
+            try {
+              await axios.delete(`http://192.168.1.103:3000/books/${id}`);
+              setBooks((prevBooks) =>
+                prevBooks.filter((book) => book.id !== id)
+              );
+            } catch (error) {
+              console.error("Error deleting book:", error);
+              setError("Error deleting book.");
+            } finally {
+              setLoading(false);
+            }
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   function handleNavigate() {
@@ -57,52 +81,64 @@ export default function TableBook() {
   }
 
   return (
-    <View>
-      <View style={styles.headerTopBar}>
-        <Text style={styles.headerTopBarText}>Lista de Livros</Text>
-      </View>
-      <View style={styles.header}>
-        <Text style={styles.heading}>Titulo</Text>
-        <Text style={styles.heading}>Autor</Text>
-        <Text style={styles.heading}>Categoria</Text>
-        <Text style={styles.heading}></Text>
-      </View>
-      <FlatList
-        data={books}
-        keyExtractor={({ id }) => id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={styles.cell}>{item.title}</Text>
-            <Text style={styles.cell}>{item.author}</Text>
-            <Text style={styles.cell}>{item.category}</Text>
-            <TouchableOpacity
-              style={styles.adit}
-              onPress={() => handleEditBook(item)}
-            >
-              <AntDesign name="edit" size={18} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.delete}
-              onPress={() => handleDeleteBook(item.id)}
-            >
-              <AntDesign name="delete" size={18} color="#fff" />
-            </TouchableOpacity>
+    <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <View style={styles.headerTopBar}>
+            <Text style={styles.headerTopBarText}>Lista de Livros</Text>
           </View>
-        )}
-      />
-      <TouchableOpacity style={styles.floatingButton}>
-        <AntDesign
-          name="pluscircle"
-          size={40}
-          color="#6AB7E2"
-          onPress={handleNavigate}
-        />
-      </TouchableOpacity>
+          <View style={styles.header}>
+            <Text style={styles.heading}>Titulo</Text>
+            <Text style={styles.heading}>Autor</Text>
+            <Text style={styles.heading}>Categoria</Text>
+            <Text style={styles.heading}></Text>
+          </View>
+          <FlatList
+            data={books}
+            keyExtractor={({ id }) => id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.row}>
+                <Text style={styles.cell}>{item.title}</Text>
+                <Text style={styles.cell}>{item.author}</Text>
+                <Text style={styles.cell}>{item.category}</Text>
+                <TouchableOpacity
+                  style={styles.adit}
+                  onPress={() => handleEditBook(item)}
+                >
+                  <AntDesign name="edit" size={18} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.delete}
+                  onPress={() => handleDeleteBook(item.id)}
+                >
+                  <AntDesign name="delete" size={18} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+          <TouchableOpacity style={styles.floatingButton}>
+            <AntDesign
+              name="pluscircle"
+              size={40}
+              color="#6AB7E2"
+              onPress={handleNavigate}
+            />
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 5,
+    backgroundColor: "#132026",
+  },
   headerTopBar: {
     backgroundColor: "#6AB7E2",
     paddingHorizontal: 12,
@@ -112,17 +148,17 @@ const styles = StyleSheet.create({
   },
   headerTopBarText: {
     color: constants.colors.black,
-    fontSize: 16,
-  },
-  heading: {
-    flex: 1,
-    color: constants.colors.white,
-    textAlign: "left",
+    fontSize: 18,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
+  },
+  heading: {
+    flex: 1,
+    color: constants.colors.white,
+    textAlign: "left",
   },
   adit: {
     paddingHorizontal: 5,
@@ -147,7 +183,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     elevation: 1,
     borderRadius: 3,
-    backgroundColor: "#132026",
+    backgroundColor: "#2f2f2f",
     padding: 5,
   },
   cell: {
@@ -161,7 +197,7 @@ const styles = StyleSheet.create({
     height: 60,
     alignItems: "center",
     justifyContent: "center",
-    right: 2,
-    bottom: -130,
+    right: 10,
+    bottom: 10,
   },
 });
