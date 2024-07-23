@@ -88,7 +88,9 @@ export default function TableBook() {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
       ) : (
         <>
           <View style={styles.headerTopBar}>
@@ -141,7 +143,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    borderRadius: 5,
     backgroundColor: "#132026",
   },
   headerTopBar: {
@@ -204,5 +205,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     right: 10,
     bottom: 10,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
