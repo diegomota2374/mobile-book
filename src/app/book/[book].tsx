@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import FormBook from "@/src/components/Book/FormBook";
+import FormeBook from "@/components/book/FormBook";
 
 export default function Book() {
   const { book } = useLocalSearchParams();
@@ -10,7 +10,7 @@ export default function Book() {
 
   return (
     <View style={{ flex: 1 }}>
-      <FormBook initialBook={initialBook} />
+      <FormeBook initialBook={initialBook} />
     </View>
   );
 }

@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { constants } from "@/src/constants";
 import { useCallback, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 import Loading from "../Loading/Loading";
+import { constants } from "@/constants";
 
 interface Books {
   id: number;
