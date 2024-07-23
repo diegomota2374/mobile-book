@@ -9,9 +9,10 @@ import {
 import { useCallback, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
-import axios from "axios";
-import Loading from "../Loading/Loading";
 import { constants } from "@/constants";
+import Loading from "../Loading/Loading";
+import FloatingButton from "../FloatingButton/FloatingButton";
+import axios from "axios";
 
 interface Books {
   id: number;
@@ -135,14 +136,7 @@ export default function TableBook() {
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ item }) => handleItemTable(item)}
           />
-          <TouchableOpacity style={styles.floatingButton}>
-            <AntDesign
-              name="pluscircle"
-              size={40}
-              color="#6AB7E2"
-              onPress={handleNavigate}
-            />
-          </TouchableOpacity>
+          <FloatingButton onPress={handleNavigate} />
         </>
       )}
     </View>
@@ -206,14 +200,5 @@ const styles = StyleSheet.create({
     color: constants.colors.white,
     textAlign: "left",
     flex: 0.3,
-  },
-  floatingButton: {
-    position: "absolute",
-    width: 60,
-    height: 60,
-    alignItems: "center",
-    justifyContent: "center",
-    right: 10,
-    bottom: 10,
   },
 });
