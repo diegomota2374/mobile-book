@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   StyleSheet,
@@ -12,6 +11,7 @@ import { useCallback, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
+import Loading from "../Loading/Loading";
 
 interface Books {
   id: number;
@@ -85,12 +85,40 @@ export default function TableBook() {
     router.navigate("/book/forme");
   }
 
+  function handleTooButtons(item: Books) {
+    return (
+      <>
+        <TouchableOpacity
+          style={styles.adit}
+          onPress={() => handleEditBook(item)}
+        >
+          <AntDesign name="edit" size={18} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.delete}
+          onPress={() => handleDeleteBook(item.id)}
+        >
+          <AntDesign name="delete" size={18} color="#fff" />
+        </TouchableOpacity>
+      </>
+    );
+  }
+
+  function handleItemTable(item: Books) {
+    return (
+      <View style={styles.row}>
+        <Text style={styles.cell}>{item.title}</Text>
+        <Text style={styles.cell}>{item.author}</Text>
+        <Text style={styles.cell}>{item.category}</Text>
+        {handleTooButtons(item)}
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
+        <Loading />
       ) : (
         <>
           <View style={styles.headerTopBar}>
@@ -105,25 +133,7 @@ export default function TableBook() {
           <FlatList
             data={books}
             keyExtractor={({ id }) => id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.row}>
-                <Text style={styles.cell}>{item.title}</Text>
-                <Text style={styles.cell}>{item.author}</Text>
-                <Text style={styles.cell}>{item.category}</Text>
-                <TouchableOpacity
-                  style={styles.adit}
-                  onPress={() => handleEditBook(item)}
-                >
-                  <AntDesign name="edit" size={18} color="#fff" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.delete}
-                  onPress={() => handleDeleteBook(item.id)}
-                >
-                  <AntDesign name="delete" size={18} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            )}
+            renderItem={({ item }) => handleItemTable(item)}
           />
           <TouchableOpacity style={styles.floatingButton}>
             <AntDesign
@@ -205,10 +215,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     right: 10,
     bottom: 10,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

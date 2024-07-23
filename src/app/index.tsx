@@ -1,4 +1,4 @@
-import TableBook from "@/src/components/book/TableBook";
+import TableBook from "@/src/components/Book/TableBook";
 import { StyleSheet, View } from "react-native";
 
 export default function Home() {

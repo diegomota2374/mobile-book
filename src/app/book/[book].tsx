@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import FormBook from "@/src/components/book/FormBook";
+import FormBook from "@/src/components/Book/FormBook";
 
 export default function Book() {
   const { book } = useLocalSearchParams();

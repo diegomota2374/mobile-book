@@ -15,20 +15,14 @@
     {
       "title": "percy jackson",
       "author": "rick riordan",
-      "category": "Terror",
+      "category": "Aventura",
       "id": "3"
     },
     {
-      "title": "Teste ",
-      "author": "Teste",
-      "category": "Aventura",
-      "id": "e150"
-    },
-    {
-      "title": "Teste novo",
+      "id": "cdf8",
+      "title": "Diego",
       "author": "Diego",
-      "category": "Ação",
-      "id": "e572"
+      "category": "Aventura"
     }
   ]
 }
