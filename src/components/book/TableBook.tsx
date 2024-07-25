@@ -45,12 +45,12 @@ export default function TableBook() {
     }, [fetchBooks])
   );
 
-  const handleEditBook = (book: Books) => {
+  const onEditBook = (book: Books) => {
     const jsonBook = JSON.stringify(book);
     router.navigate(`/book/${jsonBook}`);
   };
 
-  const handleDeleteBook = async (id: number) => {
+  const onDeleteBook = async (id: number) => {
     Alert.alert(
       "Confirme a Exclusão",
       "Tem certeza de que deseja excluir este livro?",
@@ -86,32 +86,21 @@ export default function TableBook() {
     router.navigate("/book/forme");
   }
 
-  function handleTooButtons(item: Books) {
-    return (
-      <>
-        <TouchableOpacity
-          style={styles.adit}
-          onPress={() => handleEditBook(item)}
-        >
-          <AntDesign name="edit" size={18} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.delete}
-          onPress={() => handleDeleteBook(item.id)}
-        >
-          <AntDesign name="delete" size={18} color="#fff" />
-        </TouchableOpacity>
-      </>
-    );
-  }
-
   function handleItemTable(item: Books) {
     return (
       <View style={styles.row}>
         <Text style={styles.cell}>{item.title}</Text>
         <Text style={styles.cell}>{item.author}</Text>
         <Text style={styles.cell}>{item.category}</Text>
-        {handleTooButtons(item)}
+        <TouchableOpacity style={styles.adit} onPress={() => onEditBook(item)}>
+          <AntDesign name="edit" size={18} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.delete}
+          onPress={() => onDeleteBook(item.id)}
+        >
+          <AntDesign name="delete" size={18} color="#fff" />
+        </TouchableOpacity>
       </View>
     );
   }

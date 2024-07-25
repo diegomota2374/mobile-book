@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   View,
   Text,
@@ -48,21 +48,23 @@ export default function FormeBook({ initialBook }: FormBookProps) {
 
   useEffect(() => {
     if (typeof initialBook === "string" && initialBook !== "forme") {
-      try {
-        const book = JSON.parse(initialBook) as Book;
+      if (initialBook.trim() !== "") {
+        try {
+          const book = JSON.parse(initialBook) as Book;
+          setValue("id", book.id);
+          setValue("title", book.title);
+          setValue("author", book.author);
+          setValue("category", book.category);
+        } catch (error) {
+          console.error("Failed to parse initialBook:", error);
+        }
+      } else if (typeof initialBook === "object" && initialBook !== null) {
+        const book = initialBook as Book;
         setValue("id", book.id);
         setValue("title", book.title);
         setValue("author", book.author);
         setValue("category", book.category);
-      } catch (error) {
-        console.error("Failed to parse initialBook:", error);
       }
-    } else if (typeof initialBook === "object" && initialBook !== null) {
-      const book = initialBook as Book;
-      setValue("id", book.id);
-      setValue("title", book.title);
-      setValue("author", book.author);
-      setValue("category", book.category);
     }
   }, [initialBook, setValue]);
 
@@ -91,6 +93,7 @@ export default function FormeBook({ initialBook }: FormBookProps) {
         rules={{ required: "O Título é obrigatório" }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            placeholder="Title"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
@@ -109,6 +112,7 @@ export default function FormeBook({ initialBook }: FormBookProps) {
         rules={{ required: "O Autor é obrigatório" }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            placeholder="Author"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
