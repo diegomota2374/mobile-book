@@ -26,14 +26,17 @@ export default function TableBook() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchBooks = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axios.get("http://192.168.1.103:3000/books");
       setBooks(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching books:", error);
-      setError("Erro ao buscar livros. Verifique sua conexão de rede.");
-    } finally {
+      const errorMessage =
+        "Erro ao buscar livros. Verifique sua conexão de rede.";
+      setError(errorMessage);
+      Alert.alert("Erro", errorMessage);
       setLoading(false);
     }
   }, []);
@@ -119,6 +122,10 @@ export default function TableBook() {
     <View style={styles.container}>
       {loading ? (
         <Loading />
+      ) : error ? (
+        <View>
+          <Text style={{ color: "red" }}>{error}</Text>
+        </View>
       ) : (
         <>
           <View style={styles.headerTopBar}>
