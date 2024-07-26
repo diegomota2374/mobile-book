@@ -145,7 +145,7 @@ export default function FormeBook({ initialBook }: FormBookProps) {
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.buttonText}>
-          {getValues("id") ? "Editar Livro" : "Adicionar Livro"}
+          {typeof initialBook !== "string" ? "Editar Livro" : "Adicionar Livro"}
         </Text>
       </TouchableOpacity>
     </View>

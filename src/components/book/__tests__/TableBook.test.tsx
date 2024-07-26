@@ -5,6 +5,26 @@ import MockAdapter from "axios-mock-adapter";
 import { renderRouter } from "expo-router/testing-library";
 import { router } from "expo-router";
 
+//define mock expo-inking in teste jest
+jest.mock("expo-linking", () => {
+  const module: typeof import("expo-linking") = {
+    ...jest.requireActual("expo-linking"),
+    createURL: jest.fn(),
+  };
+
+  return module;
+});
+
+//define route with expo-router
+const tableBookRoute = () => {
+  const MockComponent = jest.fn(() => <TableBook />);
+  renderRouter({
+    index: MockComponent,
+    "../TableBook": MockComponent,
+  });
+  expect(screen).toHavePathname("/");
+};
+
 const mock = new MockAdapter(axios);
 
 const mockBooks = [
@@ -21,16 +41,6 @@ beforeEach(() => {
 afterEach(() => {
   mock.reset();
 });
-
-//define route with expo-router
-const tableBookRoute = () => {
-  const MockComponent = jest.fn(() => <TableBook />);
-  renderRouter({
-    index: MockComponent,
-    "../TableBook": MockComponent,
-  });
-  expect(screen).toHavePathname("/");
-};
 
 describe("TableBook", () => {
   it("renders correctly and displays a list of books", async () => {
@@ -67,8 +77,23 @@ describe("TableBook", () => {
     });
   });
 
+  it("should navigate to the edit screen when edit button is pressed", async () => {
+    tableBookRoute();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("edit-1")).toBeTruthy();
+    });
+
+    fireEvent.press(screen.getByTestId("edit-1"));
+
+    expect(
+      router.navigate(
+        '/book/{"id":1,"title":"Book One","author":"Author One","category":"Category One"}'
+      )
+    );
+  });
+
   it("should open confirmation modal on delete button press", async () => {
-    mock.onGet(httpBook).reply(200, mockBooks);
     mock.onDelete(`${httpBook}/1`).reply(200);
 
     tableBookRoute();
@@ -82,8 +107,6 @@ describe("TableBook", () => {
   });
 
   it("should delete book when confirm delete is pressed", async () => {
-    mock.onGet(httpBook).reply(200, mockBooks);
-
     tableBookRoute();
 
     await waitFor(() => {
@@ -98,20 +121,15 @@ describe("TableBook", () => {
     });
   });
 
-  test("should navigate to add book screen when floating button is pressed", async () => {
-    mock.onGet(httpBook).reply(200, mockBooks);
-
+  it("should render floatingButton component and pressed", async () => {
     tableBookRoute();
 
-    jest.mock("expo-router", () => ({
-      router: {
-        navigate: jest.fn(),
-      },
-    }));
+    await waitFor(() =>
+      expect(screen.getByTestId("floatingButton")).toBeTruthy()
+    );
 
-    await waitFor(() => {
-      fireEvent.press(screen.getByTestId("floatingButton"));
-    });
-    expect(router.navigate).toHaveBeenCalledWith("/book/form");
+    fireEvent.press(screen.getByTestId("floatingButton"));
+
+    expect(router.navigate("/book/form"));
   });
 });
