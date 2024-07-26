@@ -12,6 +12,7 @@ import { router, useFocusEffect } from "expo-router";
 import axios from "axios";
 import Loading from "../Loading/Loading";
 import { constants } from "@/constants";
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 
 interface Books {
   id: number;
@@ -24,6 +25,8 @@ export default function TableBook() {
   const [books, setBooks] = useState<Books[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [bookToDelete, setBookToDelete] = useState<Books | null>(null);
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -53,35 +56,18 @@ export default function TableBook() {
   };
 
   const handleDeleteBook = async (id: number) => {
-    Alert.alert(
-      "Confirme a Exclusão",
-      "Tem certeza de que deseja excluir este livro?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Excluir",
-          onPress: async () => {
-            setLoading(true);
-            try {
-              await axios.delete(`http://192.168.1.103:3000/books/${id}`);
-              setBooks((prevBooks) =>
-                prevBooks.filter((book) => book.id !== id)
-              );
-            } catch (error) {
-              console.error("Error deleting book:", error);
-              setError("Error deleting book.");
-            } finally {
-              setLoading(false);
-            }
-          },
-          style: "destructive",
-        },
-      ],
-      { cancelable: true }
-    );
+    setLoading(true);
+    try {
+      await axios.delete(`http://192.168.1.103:3000/books/${id}`);
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id));
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      setError("Error deleting book.");
+    } finally {
+      setLoading(false);
+    }
+    setIsModalVisible(false);
+    setBookToDelete(null);
   };
 
   function handleNavigate() {
@@ -95,13 +81,26 @@ export default function TableBook() {
           style={styles.adit}
           onPress={() => handleEditBook(item)}
         >
-          <AntDesign name="edit" size={18} color="#fff" />
+          <AntDesign
+            name="edit"
+            testID={`edit-${item.id}`}
+            size={18}
+            color="#fff"
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.delete}
-          onPress={() => handleDeleteBook(item.id)}
+          onPress={() => {
+            setBookToDelete(item);
+            setIsModalVisible(true);
+          }}
         >
-          <AntDesign name="delete" size={18} color="#fff" />
+          <AntDesign
+            name="delete"
+            testID={`delete-${item.id}`}
+            size={18}
+            color="#fff"
+          />
         </TouchableOpacity>
       </>
     );
@@ -142,14 +141,28 @@ export default function TableBook() {
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ item }) => handleItemTable(item)}
           />
-          <TouchableOpacity style={styles.floatingButton}>
+          <TouchableOpacity
+            style={styles.floatingButton}
+            onPress={handleNavigate}
+          >
             <AntDesign
+              testID="floatingButton"
               name="pluscircle"
               size={40}
               color="#6AB7E2"
-              onPress={handleNavigate}
             />
           </TouchableOpacity>
+          <ConfirmationModal
+            visible={isModalVisible}
+            onConfirm={() => {
+              if (bookToDelete) handleDeleteBook(bookToDelete.id);
+            }}
+            onCancel={() => {
+              setIsModalVisible(false);
+              setBookToDelete(null);
+            }}
+            message="Tem certeza de que deseja excluir este livro?"
+          />
         </>
       )}
     </View>
@@ -189,14 +202,14 @@ const styles = StyleSheet.create({
     color: constants.colors.white,
     borderRadius: 4,
     marginRight: 5,
-    backgroundColor: "rgb(6, 238, 86)",
+    backgroundColor: "#6AB7E2",
   },
   delete: {
     paddingHorizontal: 5,
     paddingVertical: 3,
     color: constants.colors.white,
     borderRadius: 4,
-    backgroundColor: "rgba(238, 6, 6, 0.68)",
+    backgroundColor: "gray",
   },
   row: {
     flexDirection: "row",

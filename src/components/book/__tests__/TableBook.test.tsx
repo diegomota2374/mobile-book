@@ -1,8 +1,9 @@
-import { screen, waitFor } from "@testing-library/react-native";
+import { fireEvent, screen, waitFor } from "@testing-library/react-native";
 import TableBook from "../TableBook";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { renderRouter } from "expo-router/testing-library";
+import { router } from "expo-router";
 
 const mock = new MockAdapter(axios);
 
@@ -11,8 +12,10 @@ const mockBooks = [
   { id: 2, title: "Book 2", author: "Author 2", category: "Category 2" },
 ];
 
+const httpBook = "http://192.168.1.103:3000/books";
+
 beforeEach(() => {
-  mock.onGet("http://192.168.1.103:3000/books").reply(200, mockBooks);
+  mock.onGet(httpBook).reply(200, mockBooks);
 });
 
 afterEach(() => {
@@ -51,7 +54,7 @@ describe("TableBook", () => {
   });
 
   it("should show error when failing to fetch books", async () => {
-    mock.onGet("http://192.168.1.103:3000/books").reply(500, mockBooks);
+    mock.onGet(httpBook).reply(500, mockBooks);
 
     tableBookRoute();
 
@@ -62,5 +65,53 @@ describe("TableBook", () => {
         )
       ).toBeTruthy();
     });
+  });
+
+  it("should open confirmation modal on delete button press", async () => {
+    mock.onGet(httpBook).reply(200, mockBooks);
+    mock.onDelete(`${httpBook}/1`).reply(200);
+
+    tableBookRoute();
+
+    await waitFor(() => {
+      fireEvent.press(screen.getByTestId("delete-1"));
+      expect(
+        screen.getByText("Tem certeza de que deseja excluir este livro?")
+      ).toBeTruthy();
+    });
+  });
+
+  it("should delete book when confirm delete is pressed", async () => {
+    mock.onGet(httpBook).reply(200, mockBooks);
+
+    tableBookRoute();
+
+    await waitFor(() => {
+      fireEvent.press(screen.getByTestId("delete-1"));
+    });
+
+    fireEvent.press(screen.getByText("Confirmar"));
+
+    await waitFor(() => {
+      expect(mock.onDelete(` ${httpBook}/1`).reply(200));
+      expect(screen.queryByText("Book One")).toBeNull();
+    });
+  });
+
+  test("should navigate to add book screen when floating button is pressed", async () => {
+    mock.onGet(httpBook).reply(200, mockBooks);
+
+    tableBookRoute();
+
+    jest.mock("expo-router", () => ({
+      router: {
+        navigate: jest.fn(),
+      },
+    }));
+
+    await waitFor(() => {
+      fireEvent.press(screen.getByTestId("floatingButton"));
+    });
+    expect(router.navigate).toHaveBeenCalledWith("/book/form");
   });
 });
