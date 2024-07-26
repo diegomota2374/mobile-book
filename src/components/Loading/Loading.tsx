@@ -3,7 +3,11 @@ import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
 export default function Loading() {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#6AB7E2" />
+      <ActivityIndicator
+        testID="activity-indicator"
+        size="large"
+        color="#6AB7E2"
+      />
       <Text style={styles.loadingText}>Carregando...</Text>
     </View>
   );
