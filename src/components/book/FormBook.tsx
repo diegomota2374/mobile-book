@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { router } from "expo-router";
@@ -32,6 +33,8 @@ const categories = [
 ];
 
 export default function FormeBook({ initialBook }: FormBookProps) {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const {
     control,
     handleSubmit,
@@ -67,6 +70,7 @@ export default function FormeBook({ initialBook }: FormBookProps) {
   }, [initialBook, setValue]);
 
   const onSubmit = async (data: Book) => {
+    setLoading(true);
     try {
       if (data.id) {
         await axios.put(`http://192.168.1.103:3000/books/${data.id}`, data);
@@ -79,6 +83,8 @@ export default function FormeBook({ initialBook }: FormBookProps) {
     } catch (error) {
       console.error("Error saving book:", error);
       Alert.alert("Erro ao salvar livro. Verifique sua conexão de rede.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,7 +157,13 @@ export default function FormeBook({ initialBook }: FormBookProps) {
         onPress={handleSubmit(onSubmit)}
       >
         <Text style={styles.buttonText}>
-          {typeof initialBook !== "string" ? "Editar Livro" : "Adicionar Livro"}
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : typeof initialBook !== "string" ? (
+            "Editar Livro"
+          ) : (
+            "Adicionar Livro"
+          )}
         </Text>
       </TouchableOpacity>
     </View>
