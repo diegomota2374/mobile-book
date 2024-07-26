@@ -2,7 +2,6 @@ import {
   Modal,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   ViewStyle,
   TextStyle,
