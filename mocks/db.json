@@ -1,8 +1,8 @@
 {
   "books": [
     {
-      "title": "percy jackson",
-      "author": "rick riordan",
+      "title": "Sample Book",
+      "author": "Sample Author",
       "category": "Aventura",
       "id": "1"
     },

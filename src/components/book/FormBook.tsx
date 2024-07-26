@@ -95,6 +95,7 @@ export default function FormeBook({ initialBook }: FormBookProps) {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            placeholder={value || "title"}
           />
         )}
       />
@@ -113,6 +114,7 @@ export default function FormeBook({ initialBook }: FormBookProps) {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            placeholder={value || "author"}
           />
         )}
       />
@@ -143,7 +145,11 @@ export default function FormeBook({ initialBook }: FormBookProps) {
         <Text style={styles.errorText}>{errors.category.message}</Text>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
+      <TouchableOpacity
+        testID="submit-button"
+        style={styles.button}
+        onPress={handleSubmit(onSubmit)}
+      >
         <Text style={styles.buttonText}>
           {typeof initialBook !== "string" ? "Editar Livro" : "Adicionar Livro"}
         </Text>
