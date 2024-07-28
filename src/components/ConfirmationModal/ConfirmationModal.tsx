@@ -32,7 +32,12 @@ const ConfirmationModal = ({
           <Text style={[styles.modalText, textStyle]}>{message}</Text>
           <View style={styles.buttonContainer}>
             <Button title="Cancelar" color="gray" onPress={onCancel} />
-            <Button title="Confirmar" color="#6AB7E2" onPress={onConfirm} />
+            <Button
+              testID="confirm-delete-button"
+              title="Confirmar"
+              color="#6AB7E2"
+              onPress={onConfirm}
+            />
           </View>
         </View>
       </View>
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: 300,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#2f2f2f",
     borderRadius: 10,
     alignItems: "center",
   },
@@ -58,6 +63,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
     textAlign: "center",
+    color: "#fff",
   },
   buttonContainer: {
     flexDirection: "row",

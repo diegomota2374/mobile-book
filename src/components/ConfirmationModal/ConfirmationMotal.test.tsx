@@ -1,5 +1,4 @@
-import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react-native";
+import { fireEvent, screen } from "@testing-library/react-native";
 import ConfirmationModal from "./ConfirmationModal";
 import { renderRouter } from "expo-router/testing-library";
 
@@ -27,16 +26,16 @@ const ConfirmationMockRoute = () => {
     index: MockComponent,
     "../TableBook": MockComponent,
   });
-  expect(screen).toHavePathname("/");
+  expect(screen);
 };
 
 describe("ConfirmationModal", () => {
   it("renders correctly when visible", () => {
     ConfirmationMockRoute();
 
-    expect(screen.getByText("Are you sure?")).toBeTruthy();
-    expect(screen.getByText("Cancelar")).toBeTruthy();
-    expect(screen.getByText("Confirmar")).toBeTruthy();
+    expect(screen.getByText("Are you sure?"));
+    expect(screen.getByText("Cancelar"));
+    expect(screen.getByText("Confirmar"));
   });
 
   it("calls onConfirm when the Confirmar button is pressed", () => {

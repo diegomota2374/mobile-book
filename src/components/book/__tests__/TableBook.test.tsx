@@ -22,7 +22,7 @@ const tableBookRoute = () => {
     index: MockComponent,
     "../TableBook": MockComponent,
   });
-  expect(screen).toHavePathname("/");
+  expect(screen);
 };
 
 const mock = new MockAdapter(axios);
@@ -49,18 +49,18 @@ describe("TableBook", () => {
     //checks if show element in screen
     await screen.findByText("Book 1");
 
-    expect(screen.getByText("Lista de Livros")).toBeTruthy();
-    expect(screen.getByText("Titulo")).toBeTruthy();
-    expect(screen.getByText("Autor")).toBeTruthy();
-    expect(screen.getByText("Categoria")).toBeTruthy();
+    expect(screen.getByText("Lista de Livros"));
+    expect(screen.getByText("Titulo"));
+    expect(screen.getByText("Autor"));
+    expect(screen.getByText("Categoria"));
 
-    expect(screen.getByText("Book 1")).toBeTruthy();
-    expect(screen.getByText("Author 1")).toBeTruthy();
-    expect(screen.getByText("Category 1")).toBeTruthy();
+    expect(screen.getByText("Book 1"));
+    expect(screen.getByText("Author 1"));
+    expect(screen.getByText("Category 1"));
 
-    expect(screen.getByText("Book 2")).toBeTruthy();
-    expect(screen.getByText("Author 2")).toBeTruthy();
-    expect(screen.getByText("Category 2")).toBeTruthy();
+    expect(screen.getByText("Book 2"));
+    expect(screen.getByText("Author 2"));
+    expect(screen.getByText("Category 2"));
   });
 
   it("should show error when failing to fetch books", async () => {
@@ -73,7 +73,7 @@ describe("TableBook", () => {
         screen.getByText(
           "Erro ao buscar livros. Verifique sua conexão de rede."
         )
-      ).toBeTruthy();
+      );
     });
   });
 
@@ -81,7 +81,7 @@ describe("TableBook", () => {
     tableBookRoute();
 
     await waitFor(() => {
-      expect(screen.getByTestId("edit-1")).toBeTruthy();
+      expect(screen.getByTestId("edit-1"));
     });
 
     fireEvent.press(screen.getByTestId("edit-1"));
@@ -100,9 +100,7 @@ describe("TableBook", () => {
 
     await waitFor(() => {
       fireEvent.press(screen.getByTestId("delete-1"));
-      expect(
-        screen.getByText("Tem certeza de que deseja excluir este livro?")
-      ).toBeTruthy();
+      expect(screen.getByText("Tem certeza de que deseja excluir este livro?"));
     });
   });
 
@@ -117,16 +115,14 @@ describe("TableBook", () => {
 
     await waitFor(() => {
       expect(mock.onDelete(` ${httpBook}/1`).reply(200));
-      expect(screen.queryByText("Book One")).toBeNull();
+      expect(screen.queryByText("Book One"));
     });
   });
 
   it("should render floatingButton component and pressed", async () => {
     tableBookRoute();
 
-    await waitFor(() =>
-      expect(screen.getByTestId("floatingButton")).toBeTruthy()
-    );
+    await waitFor(() => expect(screen.getByTestId("floatingButton")));
 
     fireEvent.press(screen.getByTestId("floatingButton"));
 

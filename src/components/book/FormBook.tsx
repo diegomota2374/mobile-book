@@ -90,13 +90,14 @@ export default function FormeBook({ initialBook }: FormBookProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Title:</Text>
+      <Text style={styles.label}>Título:</Text>
       <Controller
         control={control}
         name="title"
         rules={{ required: "O Título é obrigatório" }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            testID="title"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
@@ -109,13 +110,14 @@ export default function FormeBook({ initialBook }: FormBookProps) {
         <Text style={styles.errorText}>{errors.title.message}</Text>
       )}
 
-      <Text style={styles.label}>Author:</Text>
+      <Text style={styles.label}>Autor:</Text>
       <Controller
         control={control}
         name="author"
         rules={{ required: "O Autor é obrigatório" }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            testID="author"
             style={styles.input}
             onBlur={onBlur}
             onChangeText={onChange}
@@ -139,10 +141,16 @@ export default function FormeBook({ initialBook }: FormBookProps) {
             style={styles.picker}
             onValueChange={(itemValue) => onChange(itemValue)}
             onBlur={onBlur}
+            testID="category"
           >
             <Picker.Item label="Selecione uma categoria" value="" />
             {categories.map((category) => (
-              <Picker.Item key={category} label={category} value={category} />
+              <Picker.Item
+                testID={category}
+                key={category}
+                label={category}
+                value={category}
+              />
             ))}
           </Picker>
         )}

@@ -118,7 +118,7 @@ export default function TableBook() {
   }
 
   return (
-    <View style={styles.container}>
+    <View testID="book-list" style={styles.container}>
       {loading ? (
         <Loading />
       ) : error ? (
@@ -127,7 +127,7 @@ export default function TableBook() {
         </View>
       ) : (
         <>
-          <View style={styles.headerTopBar}>
+          <View data-cy="book-list" style={styles.headerTopBar}>
             <Text style={styles.headerTopBarText}>Lista de Livros</Text>
           </View>
           <View style={styles.header}>
@@ -140,6 +140,7 @@ export default function TableBook() {
             data={books}
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ item }) => handleItemTable(item)}
+            testID="book-item"
           />
           <TouchableOpacity
             style={styles.floatingButton}

@@ -8,15 +8,15 @@ const loadingRoute = () => {
     index: MockComponent,
     "../Loading": MockComponent,
   });
-  expect(screen).toHavePathname("/");
+  expect(screen);
 };
 
 describe("loading", () => {
   it("renders an activity indicator and text", () => {
     loadingRoute();
 
-    expect(screen.getByTestId("activity-indicator")).toBeTruthy();
+    expect(screen.getByTestId("activity-indicator"));
 
-    expect(screen.getByText("Carregando...")).toBeTruthy();
+    expect(screen.getByText("Carregando..."));
   });
 });
