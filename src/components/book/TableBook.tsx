@@ -126,7 +126,7 @@ export default function TableBook() {
           <Text style={{ color: "red" }}>{error}</Text>
         </View>
       ) : (
-        <>
+        <View style={styles.tableContente}>
           <View data-cy="book-list" style={styles.headerTopBar}>
             <Text style={styles.headerTopBarText}>Lista de Livros</Text>
           </View>
@@ -142,17 +142,7 @@ export default function TableBook() {
             renderItem={({ item }) => handleItemTable(item)}
             testID="book-item"
           />
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={handleNavigate}
-          >
-            <AntDesign
-              testID="floatingButton"
-              name="pluscircle"
-              size={40}
-              color="#6AB7E2"
-            />
-          </TouchableOpacity>
+
           <ConfirmationModal
             visible={isModalVisible}
             onConfirm={() => {
@@ -164,8 +154,17 @@ export default function TableBook() {
             }}
             message="Tem certeza de que deseja excluir este livro?"
           />
-        </>
+        </View>
       )}
+
+      <TouchableOpacity style={styles.floatingButton} onPress={handleNavigate}>
+        <AntDesign
+          testID="floatingButton"
+          name="pluscircle"
+          size={40}
+          color="#6AB7E2"
+        />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -175,6 +174,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: "#132026",
+  },
+  tableContente: {
+    maxHeight: 500,
   },
   headerTopBar: {
     backgroundColor: "#6AB7E2",

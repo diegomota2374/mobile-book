@@ -1,8 +1,8 @@
 {
   "books": [
     {
-      "title": "Sample Book",
-      "author": "Sample Author",
+      "title": "percy jacksonTest Title edit",
+      "author": "rick riordanTest Author edit",
       "category": "Aventura",
       "id": "1"
     },
@@ -17,6 +17,18 @@
       "author": "rick riordan",
       "category": "Aventura",
       "id": "3"
+    },
+    {
+      "id": "a06a",
+      "title": "Test Title",
+      "author": "Test Author",
+      "category": "Aventura"
+    },
+    {
+      "id": "3dbb",
+      "title": "Test Title",
+      "author": "Test Author",
+      "category": "Aventura"
     }
   ]
 }
