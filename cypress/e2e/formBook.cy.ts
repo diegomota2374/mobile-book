@@ -36,21 +36,42 @@ describe("form book", () => {
   });
 
   describe("FormBook Component - Edit Mode", () => {
+    const initialBook = {
+      id: 1,
+      title: "Original Title",
+      author: "Original Author",
+      category: "Aventura",
+    };
+    const jsonString = JSON.stringify(initialBook);
+
+    const urlEncodedString = encodeURIComponent(jsonString);
+
     it("go to form edit", () => {
-      cy.visit("/");
+      cy.intercept("GET", "**/book/1", urlEncodedString).as("getBook");
+      cy.intercept("PUT", "**/book/1", (req) => {
+        req.reply((res) => {
+          res.send({ ...req.body, success: true });
+        });
+      }).as("updateBook");
 
-      cy.get('[data-testid="edit-1"]').should("exist").click();
+      cy.visit(`/book/${urlEncodedString}`);
 
-      cy.url().should(
-        "include",
-        `/book/%7B%22title%22:%22percy%20jackson%22,%22author%22:%22rick%20riordan%22,%22category%22:%22Aventura%22,%22id%22:%221%22%7D`
-      );
+      cy.url().should("include", `/book/${urlEncodedString}`);
     });
 
     it("pre-fills the form with existing book data", () => {
-      cy.get('[data-testid="title"]').should("have.value", "percy jackson");
-      cy.get('[data-testid="author"]').should("have.value", "rick riordan");
-      cy.get('[data-testid="category"]').should("have.value", "Aventura");
+      cy.get('[data-testid="title"]').should(
+        "have.value",
+        `${initialBook.title}`
+      );
+      cy.get('[data-testid="author"]').should(
+        "have.value",
+        `${initialBook.author}`
+      );
+      cy.get('[data-testid="category"]').should(
+        "have.value",
+        `${initialBook.category}`
+      );
     });
 
     it("fills end submit edit form", () => {

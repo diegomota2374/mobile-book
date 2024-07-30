@@ -27,12 +27,26 @@ export default function TableBook() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [bookToDelete, setBookToDelete] = useState<Books | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const itemsPerPage = 5;
+
+  const ipMachine = "192.168.1.102";
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://192.168.1.103:3000/books");
-      setBooks(response.data);
+      const totalItemBook = (await axios.get(`http://${ipMachine}:3000/books`))
+        .data.length;
+      const response = await axios.get(`http://${ipMachine}:3000/books`, {
+        params: { _page: currentPage, _per_page: itemsPerPage },
+      });
+
+      setBooks(response.data["data"]);
+      setTotalItems(totalItemBook);
+      setTotalPages(Math.ceil(totalItemBook / itemsPerPage));
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching books:", error);
@@ -42,7 +56,7 @@ export default function TableBook() {
       Alert.alert("Erro", errorMessage);
       setLoading(false);
     }
-  }, []);
+  }, [currentPage]);
 
   useFocusEffect(
     useCallback(() => {
@@ -58,7 +72,7 @@ export default function TableBook() {
   const handleDeleteBook = async (id: number) => {
     setLoading(true);
     try {
-      await axios.delete(`http://192.168.1.103:3000/books/${id}`);
+      await axios.delete(`http://${ipMachine}:3000/books/${id}`);
       setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id));
     } catch (error) {
       console.error("Error deleting book:", error);
@@ -142,6 +156,28 @@ export default function TableBook() {
             renderItem={({ item }) => handleItemTable(item)}
             testID="book-item"
           />
+
+          <View style={styles.pagination}>
+            <TouchableOpacity
+              style={styles.pageButton}
+              onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <Text style={styles.pageButtonText}>{"<"}</Text>
+            </TouchableOpacity>
+            <Text
+              style={styles.pageInfo}
+            >{`${currentPage} / ${totalPages}`}</Text>
+            <TouchableOpacity
+              style={styles.pageButton}
+              onPress={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+            >
+              <Text style={styles.pageButtonText}>{">"}</Text>
+            </TouchableOpacity>
+          </View>
 
           <ConfirmationModal
             visible={isModalVisible}
@@ -238,5 +274,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     right: 10,
     bottom: 10,
+  },
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  pageButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginHorizontal: 5,
+    backgroundColor: "#6AB7E2",
+    borderRadius: 5,
+  },
+  pageButtonText: {
+    color: "#fff",
+  },
+  pageInfo: {
+    color: constants.colors.white,
+    marginHorizontal: 10,
   },
 });

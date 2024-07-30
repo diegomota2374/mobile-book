@@ -20,6 +20,8 @@ const initialBook = {
   category: "Aventura",
 };
 
+const ipMachine = "192.168.1.102";
+
 //define route with expo-router
 const formBookRoute = (Form?: string) => {
   const MockComponent = jest.fn(() => (
@@ -73,7 +75,7 @@ describe("FormeBook", () => {
     fireEvent.press(screen.getByTestId("submit-button"));
 
     await waitFor(() => {
-      expect(axios.post(`http://192.168.1.103:3000/books/${initialBook}`));
+      expect(axios.post(`http://${ipMachine}:3000/books/${initialBook}`));
     });
   });
 
@@ -87,7 +89,7 @@ describe("FormeBook", () => {
     await waitFor(() => {
       expect(
         axios.put(
-          `http://192.168.1.103:3000/books/${initialBook.id}`,
+          `http://${ipMachine}:3000/books/${initialBook.id}`,
           initialBook
         )
       );

@@ -32,7 +32,9 @@ const mockBooks = [
   { id: 2, title: "Book 2", author: "Author 2", category: "Category 2" },
 ];
 
-const httpBook = "http://192.168.1.103:3000/books";
+const ipMachine = "192.168.1.102";
+
+const httpBook = `http://${ipMachine}:3000/books`;
 
 beforeEach(() => {
   mock.onGet(httpBook).reply(200, mockBooks);

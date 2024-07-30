@@ -32,6 +32,8 @@ const categories = [
   "Terror",
 ];
 
+const ipMachine = "192.168.1.102";
+
 export default function FormeBook({ initialBook }: FormBookProps) {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -73,10 +75,10 @@ export default function FormeBook({ initialBook }: FormBookProps) {
     setLoading(true);
     try {
       if (data.id) {
-        await axios.put(`http://192.168.1.103:3000/books/${data.id}`, data);
+        await axios.put(`http://${ipMachine}:3000/books/${data.id}`, data);
         Alert.alert("Livro atualizado com sucesso!");
       } else {
-        await axios.post("http://192.168.1.103:3000/books", data);
+        await axios.post(`http://${ipMachine}:3000/books`, data);
         Alert.alert("Livro adicionado com sucesso!");
       }
       router.back();
