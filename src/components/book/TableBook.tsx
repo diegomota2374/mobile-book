@@ -13,6 +13,7 @@ import axios from "axios";
 import Loading from "../Loading/Loading";
 import { constants } from "@/constants";
 import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
+import Pagination from "../Pagination/Pagination";
 
 interface Books {
   id: number;
@@ -29,7 +30,6 @@ export default function TableBook() {
   const [bookToDelete, setBookToDelete] = useState<Books | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalItems, setTotalItems] = useState<number>(0);
   const itemsPerPage = 5;
 
   const ipMachine = "192.168.1.102";
@@ -44,7 +44,6 @@ export default function TableBook() {
       });
 
       setBooks(response.data["data"]);
-      setTotalItems(totalItemBook);
       setTotalPages(Math.ceil(totalItemBook / itemsPerPage));
 
       setLoading(false);
@@ -157,27 +156,11 @@ export default function TableBook() {
             testID="book-item"
           />
 
-          <View style={styles.pagination}>
-            <TouchableOpacity
-              style={styles.pageButton}
-              onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              <Text style={styles.pageButtonText}>{"<"}</Text>
-            </TouchableOpacity>
-            <Text
-              style={styles.pageInfo}
-            >{`${currentPage} / ${totalPages}`}</Text>
-            <TouchableOpacity
-              style={styles.pageButton}
-              onPress={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              <Text style={styles.pageButtonText}>{">"}</Text>
-            </TouchableOpacity>
-          </View>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
 
           <ConfirmationModal
             visible={isModalVisible}
@@ -274,25 +257,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     right: 10,
     bottom: 10,
-  },
-  pagination: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  pageButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginHorizontal: 5,
-    backgroundColor: "#6AB7E2",
-    borderRadius: 5,
-  },
-  pageButtonText: {
-    color: "#fff",
-  },
-  pageInfo: {
-    color: constants.colors.white,
-    marginHorizontal: 10,
   },
 });
